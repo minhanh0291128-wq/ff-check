@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FF Check - Tra cứu Free Fire</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Inter', sans-serif;
-  background: #0a0a1a;
+  background: #070712;
   color: #fff;
   min-height: 100vh;
   display: flex;
@@ -17,6 +17,14 @@ body {
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(0,136,255,0.08), transparent);
+  pointer-events: none;
 }
 .stars {
   position: fixed;
@@ -33,8 +41,8 @@ body {
   animation: twinkle var(--dur) ease-in-out infinite alternate;
 }
 @keyframes twinkle {
-  0% { opacity: 0.2; }
-  100% { opacity: 1; }
+  0% { opacity: 0.15; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
 }
 .container {
   position: relative;
@@ -44,26 +52,35 @@ body {
   padding: 20px;
 }
 .card {
-  background: linear-gradient(135deg, rgba(20,20,50,0.95), rgba(10,10,30,0.95));
-  border: 1px solid rgba(0,136,255,0.3);
-  border-radius: 20px;
-  padding: 35px 30px;
-  box-shadow: 0 0 40px rgba(0,136,255,0.1);
+  background: linear-gradient(145deg, rgba(16,16,40,0.97), rgba(8,8,24,0.97));
+  border: 1px solid rgba(0,136,255,0.2);
+  border-radius: 24px;
+  padding: 40px 32px;
+  box-shadow: 0 0 60px rgba(0,136,255,0.06), inset 0 1px 0 rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  transition: border-color 0.4s;
 }
+.card:hover { border-color: rgba(0,136,255,0.35); }
 h1 {
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 30px;
+  font-weight: 900;
   text-align: center;
-  margin-bottom: 5px;
-  background: linear-gradient(135deg, #0088ff, #00ccff);
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #0088ff, #40bbff, #0088ff);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
 }
+@keyframes shimmer { to { background-position: 200% center; } }
 .subtitle {
   text-align: center;
-  color: #667;
+  color: #556;
   font-size: 13px;
-  margin-bottom: 25px;
+  margin-bottom: 28px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
 }
 .input-group {
   display: flex;
@@ -71,127 +88,155 @@ h1 {
 }
 .input-group input {
   flex: 1;
-  padding: 14px 18px;
-  border: 1px solid rgba(0,136,255,0.3);
-  border-radius: 12px;
-  background: rgba(255,255,255,0.05);
+  padding: 15px 20px;
+  border: 1px solid rgba(0,136,255,0.2);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
   color: #fff;
   font-size: 16px;
+  font-weight: 500;
   outline: none;
   transition: 0.3s;
 }
 .input-group input:focus {
   border-color: #0088ff;
-  box-shadow: 0 0 15px rgba(0,136,255,0.15);
+  box-shadow: 0 0 20px rgba(0,136,255,0.12);
+  background: rgba(255,255,255,0.06);
 }
+.input-group input::placeholder { color: #445; font-weight: 400; }
 .input-group button {
-  padding: 14px 24px;
+  padding: 15px 28px;
   border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #0088ff, #0066cc);
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0088ff, #0055bb);
   color: #fff;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
   white-space: nowrap;
+  letter-spacing: 0.3px;
 }
 .input-group button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 20px rgba(0,136,255,0.3);
+  box-shadow: 0 8px 25px rgba(0,136,255,0.35);
 }
 .input-group button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 .result {
-  margin-top: 25px;
+  margin-top: 28px;
   display: none;
 }
 .result.show { display: block; }
 .status-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 14px;
   margin-bottom: 20px;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.4;
 }
 .status-online {
-  background: rgba(0,200,80,0.1);
-  border: 1px solid rgba(0,200,80,0.3);
-  color: #00c850;
+  background: rgba(0,200,80,0.08);
+  border: 1px solid rgba(0,200,80,0.25);
+  color: #00e860;
 }
 .status-offline {
-  background: rgba(255,50,50,0.1);
-  border: 1px solid rgba(255,50,50,0.3);
-  color: #ff3232;
+  background: rgba(255,50,50,0.08);
+  border: 1px solid rgba(255,50,50,0.2);
+  color: #ff4040;
 }
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
-.status-online .status-dot { background: #00c850; box-shadow: 0 0 8px #00c850; }
-.status-offline .status-dot { background: #ff3232; box-shadow: 0 0 8px #ff3232; }
+.status-online .status-dot { background: #00e860; box-shadow: 0 0 12px #00e860; }
+.status-offline .status-dot { background: #ff4040; box-shadow: 0 0 12px #ff4040; }
+.status-sub {
+  display: block;
+  font-weight: 500;
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 1px;
+}
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 .info-item {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
-  padding: 14px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  padding: 14px 16px;
+  transition: 0.2s;
 }
+.info-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(0,136,255,0.15); }
 .info-item.full { grid-column: 1 / -1; }
+.info-item.likes {
+  background: rgba(255,180,0,0.04);
+  border-color: rgba(255,180,0,0.1);
+}
+.info-item.likes:hover { border-color: rgba(255,180,0,0.25); }
 .info-label {
-  font-size: 11px;
-  color: #667;
+  font-size: 10px;
+  color: #556;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 5px;
 }
 .info-value {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
 }
+.info-value.likes-val { color: #ffb800; }
 .error {
-  color: #ff4444;
+  color: #ff5555;
   text-align: center;
   margin-top: 15px;
-  padding: 12px;
-  background: rgba(255,50,50,0.1);
-  border-radius: 10px;
+  padding: 14px;
+  background: rgba(255,50,50,0.07);
+  border: 1px solid rgba(255,50,50,0.15);
+  border-radius: 14px;
   font-size: 14px;
+  font-weight: 500;
   display: none;
 }
 .error.show { display: block; }
 .loading {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 24px;
   display: none;
 }
 .loading.show { display: block; }
 .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid rgba(0,136,255,0.2);
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(0,136,255,0.1);
   border-top-color: #0088ff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 10px;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 12px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: #556; font-size: 13px; font-weight: 500; }
 @media (max-width: 480px) {
   .input-group { flex-direction: column; }
   .info-grid { grid-template-columns: 1fr; }
-  .card { padding: 25px 18px; }
+  .card { padding: 28px 18px; }
+  h1 { font-size: 26px; }
 }
 </style>
 </head>
@@ -207,7 +252,7 @@ h1 {
     </div>
     <div class="loading" id="loading">
       <div class="spinner"></div>
-      Đang tra cứu...
+      <span class="loading-text">Đang tra cứu...</span>
     </div>
     <div class="result" id="result">
       <div class="status-bar" id="statusBar">
@@ -223,15 +268,19 @@ h1 {
           <div class="info-label">Level</div>
           <div class="info-value" id="level">-</div>
         </div>
+        <div class="info-item likes">
+          <div class="info-label">Lượt thích</div>
+          <div class="info-value likes-val" id="liked">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Quốc gia</div>
+          <div class="info-value" id="region">-</div>
+        </div>
         <div class="info-item full">
           <div class="info-label">Ngày tạo tài khoản</div>
           <div class="info-value" id="createDate">-</div>
         </div>
-        <div class="info-item">
-          <div class="info-label">Khu vực</div>
-          <div class="info-value" id="region">-</div>
-        </div>
-        <div class="info-item">
+        <div class="info-item full">
           <div class="info-label">Guild</div>
           <div class="info-value" id="guild">-</div>
         </div>
@@ -241,6 +290,14 @@ h1 {
   </div>
 </div>
 <script>
+const REGION_NAMES = {
+  'SG': 'Singapore', 'IND': 'India', 'BD': 'Bangladesh',
+  'ID': 'Indonesia', 'TH': 'Thái Lan', 'TW': 'Đài Loan',
+  'VN': 'Việt Nam', 'BR': 'Brazil', 'US': 'Bắc Mỹ',
+  'EU': 'Châu Âu', 'NP': 'Nepal', 'ME': 'Trung Đông',
+  'RU': 'Nga', 'PK': 'Pakistan', 'SAC': 'Nam Mỹ'
+};
+
 function createStars() {
   const c = document.getElementById('stars');
   for (let i = 0; i < 150; i++) {
@@ -254,6 +311,33 @@ function createStars() {
   }
 }
 createStars();
+
+function fmtNum(n) {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function fmtDateTime(ts) {
+  const d = new Date(ts * 1000);
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  return hh + ':' + mm + ' ' + dd + '/' + mo + '/' + yyyy;
+}
+
+function timeAgo(ts) {
+  if (!ts) return 'không rõ';
+  const diff = Math.floor(Date.now() / 1000 - ts);
+  if (diff < 60) return 'vừa xong';
+  if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+  return Math.floor(diff / 86400) + ' ngày trước';
+}
+
+function countryName(code) {
+  return REGION_NAMES[code] || code;
+}
 
 async function check() {
   const uid = document.getElementById('uidInput').value.trim();
@@ -287,26 +371,19 @@ function displayResult(d) {
   const statusText = document.getElementById('statusText');
   bar.className = 'status-bar ' + (d.online ? 'status-online' : 'status-offline');
   if (d.online) {
-    statusText.textContent = '🟢 Đang online';
+    statusText.innerHTML = '🟢 Đang online';
   } else {
+    const dt = fmtDateTime(d.lastLoginAt);
     const ago = timeAgo(d.lastLoginAt);
-    statusText.textContent = '🔴 Offline · ' + ago;
+    statusText.innerHTML = '🔴 Offline từ ' + dt + '<span class="status-sub">' + ago + '</span>';
   }
   document.getElementById('nickname').textContent = d.nickname;
   document.getElementById('level').textContent = d.level;
+  document.getElementById('liked').textContent = fmtNum(d.liked);
   document.getElementById('createDate').textContent = d.accountAge;
-  document.getElementById('region').textContent = d.region;
+  document.getElementById('region').textContent = countryName(d.region);
   document.getElementById('guild').textContent = d.guild || 'Không có';
   document.getElementById('result').classList.add('show');
-}
-
-function timeAgo(ts) {
-  if (!ts) return 'không rõ';
-  const diff = Math.floor(Date.now() / 1000 - ts);
-  if (diff < 60) return 'vừa xong';
-  if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
-  if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
-  return Math.floor(diff / 86400) + ' ngày trước';
 }
 
 function showError(msg) {
