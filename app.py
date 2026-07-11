@@ -39,18 +39,16 @@ def api_check():
                 'api': API_KEY
             }, timeout=10)
 
-            if resp.status_code != 200:
-                try:
-                    err = resp.json()
-                    if 'error' in err:
-                        msg = err['error']
-                        if 'quota' in msg.lower() or 'limit' in msg.lower():
-                            return jsonify({'error': 'API hết lượt, thử lại sau'}), 429
-                except:
-                    pass
+            data = resp.json()
+
+            if data.get('status') == 'quota_exceeded':
+                return jsonify({'error': 'API hết lượt, mai thử lại nhé (25/25)'}), 429
+            if data.get('error_code'):
                 continue
 
-            data = resp.json()
+            if resp.status_code != 200:
+                continue
+
             if data and 'result' in data:
                 result = data['result']
                 account = result.get('AccountInfo', {}) or {}
