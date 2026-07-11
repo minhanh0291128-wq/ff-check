@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FF Check - Tra cứu Free Fire</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a1a;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--dur) ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  padding: 20px;
+}
+.card {
+  background: linear-gradient(135deg, rgba(20,20,50,0.95), rgba(10,10,30,0.95));
+  border: 1px solid rgba(0,136,255,0.3);
+  border-radius: 20px;
+  padding: 35px 30px;
+  box-shadow: 0 0 40px rgba(0,136,255,0.1);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 5px;
+  background: linear-gradient(135deg, #0088ff, #00ccff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  text-align: center;
+  color: #667;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+.input-group input {
+  flex: 1;
+  padding: 14px 18px;
+  border: 1px solid rgba(0,136,255,0.3);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s;
+}
+.input-group input:focus {
+  border-color: #0088ff;
+  box-shadow: 0 0 15px rgba(0,136,255,0.15);
+}
+.input-group button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0088ff, #0066cc);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+.input-group button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(0,136,255,0.3);
+}
+.input-group button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.result {
+  margin-top: 25px;
+  display: none;
+}
+.result.show { display: block; }
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 15px;
+}
+.status-online {
+  background: rgba(0,200,80,0.1);
+  border: 1px solid rgba(0,200,80,0.3);
+  color: #00c850;
+}
+.status-offline {
+  background: rgba(255,50,50,0.1);
+  border: 1px solid rgba(255,50,50,0.3);
+  color: #ff3232;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-online .status-dot { background: #00c850; box-shadow: 0 0 8px #00c850; }
+.status-offline .status-dot { background: #ff3232; box-shadow: 0 0 8px #ff3232; }
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.info-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 14px;
+}
+.info-item.full { grid-column: 1 / -1; }
+.info-label {
+  font-size: 11px;
+  color: #667;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.info-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+.error {
+  color: #ff4444;
+  text-align: center;
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(255,50,50,0.1);
+  border-radius: 10px;
+  font-size: 14px;
+  display: none;
+}
+.error.show { display: block; }
+.loading {
+  text-align: center;
+  margin-top: 20px;
+  display: none;
+}
+.loading.show { display: block; }
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(0,136,255,0.2);
+  border-top-color: #0088ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 10px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 480px) {
+  .input-group { flex-direction: column; }
+  .info-grid { grid-template-columns: 1fr; }
+  .card { padding: 25px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="container">
+  <div class="card">
+    <h1>FF Check</h1>
+    <p class="subtitle">Tra cứu thông tin tài khoản Free Fire</p>
+    <div class="input-group">
+      <input type="text" id="uidInput" placeholder="Nhập UID..." maxlength="15">
+      <button id="checkBtn" onclick="check()">Tra cứu</button>
+    </div>
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      Đang tra cứu...
+    </div>
+    <div class="result" id="result">
+      <div class="status-bar" id="statusBar">
+        <span class="status-dot"></span>
+        <span id="statusText"></span>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Nickname</div>
+          <div class="info-value" id="nickname">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Level</div>
+          <div class="info-value" id="level">-</div>
+        </div>
+        <div class="info-item full">
+          <div class="info-label">Ngày tạo tài khoản</div>
+          <div class="info-value" id="createDate">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Khu vực</div>
+          <div class="info-value" id="region">-</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Guild</div>
+          <div class="info-value" id="guild">-</div>
+        </div>
+      </div>
+    </div>
+    <div class="error" id="error"></div>
+  </div>
+</div>
+<script>
+function createStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 150; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.setProperty('--dur', (2 + Math.random() * 3) + 's');
+    s.style.width = s.style.height = (1 + Math.random() * 2) + 'px';
+    c.appendChild(s);
+  }
+}
+createStars();
+
+async function check() {
+  const uid = document.getElementById('uidInput').value.trim();
+  if (!uid || uid.length < 6 || !/^\d+$/.test(uid)) {
+    showError('UID không hợp lệ (6-15 chữ số)');
+    return;
+  }
+  const btn = document.getElementById('checkBtn');
+  const loading = document.getElementById('loading');
+  const result = document.getElementById('result');
+  const error = document.getElementById('error');
+  btn.disabled = true;
+  loading.classList.add('show');
+  result.classList.remove('show');
+  error.classList.remove('show');
+  try {
+    const res = await fetch('/api/check?uid=' + uid);
+    const data = await res.json();
+    if (data.error) { showError(data.error); return; }
+    displayResult(data);
+  } catch (e) {
+    showError('Lỗi kết nối máy chủ');
+  } finally {
+    btn.disabled = false;
+    loading.classList.remove('show');
+  }
+}
+
+function displayResult(d) {
+  const bar = document.getElementById('statusBar');
+  const statusText = document.getElementById('statusText');
+  bar.className = 'status-bar ' + (d.online ? 'status-online' : 'status-offline');
+  if (d.online) {
+    statusText.textContent = '🟢 Đang online';
+  } else {
+    const ago = timeAgo(d.lastLoginAt);
+    statusText.textContent = '🔴 Offline · ' + ago;
+  }
+  document.getElementById('nickname').textContent = d.nickname;
+  document.getElementById('level').textContent = d.level;
+  document.getElementById('createDate').textContent = d.accountAge;
+  document.getElementById('region').textContent = d.region;
+  document.getElementById('guild').textContent = d.guild || 'Không có';
+  document.getElementById('result').classList.add('show');
+}
+
+function timeAgo(ts) {
+  if (!ts) return 'không rõ';
+  const diff = Math.floor(Date.now() / 1000 - ts);
+  if (diff < 60) return 'vừa xong';
+  if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+  return Math.floor(diff / 86400) + ' ngày trước';
+}
+
+function showError(msg) {
+  const el = document.getElementById('error');
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById('result').classList.remove('show');
+}
+</script>
+</body>
+</html>
