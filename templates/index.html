@@ -172,36 +172,65 @@ h1 {
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 .info-item {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 14px;
-  padding: 14px 16px;
-  transition: 0.2s;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 16px 18px;
+  transition: 0.25s;
+  position: relative;
+  overflow: hidden;
 }
-.info-item:hover { background: rgba(255,255,255,0.04); border-color: rgba(0,136,255,0.15); }
+.info-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  border-radius: 16px 0 0 16px;
+  opacity: 0;
+  transition: 0.25s;
+}
+.info-item:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(0,136,255,0.2);
+  transform: translateY(-1px);
+}
+.info-item:hover::before { opacity: 1; }
 .info-item.full { grid-column: 1 / -1; }
 .info-item.likes {
-  background: rgba(255,180,0,0.04);
-  border-color: rgba(255,180,0,0.1);
+  background: rgba(255,180,0,0.05);
+  border-color: rgba(255,180,0,0.12);
 }
+.info-item.likes::before { background: #ffb800; }
 .info-item.likes:hover { border-color: rgba(255,180,0,0.25); }
+.info-item.nick { grid-column: 1 / -1; }
+.info-item.nick::before { background: #0088ff; }
+.info-item.nick .info-value { font-size: 20px; text-align: center; }
+.info-item.level::before { background: #a855f7; }
+.info-item.level .info-value { color: #c084fc; }
+.info-item.region::before { background: #22d3ee; }
+.info-item.region .info-value { color: #67e8f9; }
+.info-item.date::before { background: #34d399; }
+.info-item.date .info-value { color: #6ee7b7; }
+.info-item.guild::before { background: #f97316; }
+.info-item.guild .info-value { color: #fb923c; }
 .info-label {
-  font-size: 10px;
-  color: #556;
+  font-size: 11px;
+  color: #667;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 .info-value {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
-.info-value.likes-val { color: #ffb800; }
+.info-value.likes-val { color: #ffb800; font-size: 22px; }
 .error {
   color: #ff5555;
   text-align: center;
@@ -260,28 +289,28 @@ h1 {
         <span id="statusText"></span>
       </div>
       <div class="info-grid">
-        <div class="info-item">
-          <div class="info-label">Nickname</div>
+        <div class="info-item nick">
+          <div class="info-label">👤 Nickname</div>
           <div class="info-value" id="nickname">-</div>
         </div>
-        <div class="info-item">
-          <div class="info-label">Level</div>
+        <div class="info-item level">
+          <div class="info-label">⭐ Level</div>
           <div class="info-value" id="level">-</div>
         </div>
         <div class="info-item likes">
-          <div class="info-label">Lượt thích</div>
+          <div class="info-label">❤️ Lượt thích</div>
           <div class="info-value likes-val" id="liked">-</div>
         </div>
-        <div class="info-item">
-          <div class="info-label">Quốc gia</div>
+        <div class="info-item region">
+          <div class="info-label">🌍 Quốc gia</div>
           <div class="info-value" id="region">-</div>
         </div>
-        <div class="info-item full">
-          <div class="info-label">Ngày tạo tài khoản</div>
+        <div class="info-item date">
+          <div class="info-label">📅 Ngày tạo</div>
           <div class="info-value" id="createDate">-</div>
         </div>
-        <div class="info-item full">
-          <div class="info-label">Guild</div>
+        <div class="info-item guild">
+          <div class="info-label">🏰 Guild</div>
           <div class="info-value" id="guild">-</div>
         </div>
       </div>
