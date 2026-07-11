@@ -30,12 +30,16 @@ def api_check():
     first = detect_region(uid)
     for region in [first] + [r for r in REGIONS if r != first]:
         try:
-            resp = requests.get(f'{API_BASE}/info?region={region}&uid={uid}&key={API_KEY}', timeout=10)
+            resp = requests.get(f'{API_BASE}/info?region={region}&uid={uid}', timeout=10,
+ headers={'x-api-key': API_KEY, 'User-Agent': 'FFCheck/1.0 (+https://ff-check.onrender.com)'})
             if resp.status_code != 200:
                 try:
                     err = resp.json()
-                    if 'QUOTA' in err.get('code', ''):
+                    code = err.get('code', '')
+                    if 'QUOTA' in code:
                         return jsonify({'error': 'API hết lượt, chờ đến 1/8/2026 hoặc dùng key mới'}), 429
+                    if code == 'FW_002':
+                        return jsonify({'error': 'Lỗi xác thực API, thử lại sau'}), 502
                 except: pass
                 continue
             data = resp.json()
