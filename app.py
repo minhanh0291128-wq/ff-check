@@ -53,17 +53,17 @@ def api_check():
             data = resp.json()
             if data and 'result' in data:
                 result = data['result']
-                info = result.get('captainBasicInfo', {}) or {}
                 account = result.get('AccountInfo', {}) or {}
+                info = result.get('captainBasicInfo', {}) or {}
                 guild = result.get('GuildInfo', {}) or {}
 
-                nickname = info.get('nickname') or account.get('AccountName', 'Không rõ')
-                level = info.get('level') or account.get('AccountLevel', 0)
-                liked = info.get('liked') or account.get('AccountLikes', 0)
-                region_name = info.get('region') or account.get('AccountRegion', region)
+                nickname = account.get('AccountName') or info.get('nickname', 'Không rõ')
+                level = account.get('AccountLevel') or info.get('level', 0)
+                liked = account.get('AccountLikes') or info.get('liked', 0)
+                region_name = account.get('AccountRegion') or info.get('region', region)
 
-                last_login = info.get('lastLoginAt') or account.get('AccountLastLogin', 0)
-                created = info.get('createAt') or account.get('AccountCreateTime', 0)
+                last_login = account.get('AccountLastLogin') or info.get('lastLoginAt', 0)
+                created = account.get('AccountCreateTime') or info.get('createAt', 0)
 
                 if isinstance(last_login, str):
                     try: last_login = int(last_login)
