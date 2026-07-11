@@ -4,10 +4,11 @@ from datetime import datetime, timezone
 
 app = Flask(__name__)
 
-API_KEY = 'ffc_mr541c7x_sk7uci9jspurahyu091v'
-API_BASE = 'https://developers.freefirecommunity.com/api/v1'
+API_KEY = '7vB9oJCF7II1PY8oidpcUpWSOAKizw'
+API_UID = 'OGkM1WzgzXbqLLovkBJFXWfNX2h1'
+API_BASE = 'https://proapis.hlgamingofficial.com/main/games/freefire/account/api'
 
-REGIONS = ['SG', 'IND', 'BD', 'SG', 'ID', 'TH', 'TW', 'VN', 'BR', 'US']
+REGIONS = ['SG', 'IND', 'BD', 'ID', 'TH', 'TW', 'VN', 'BR', 'US', 'EU', 'NP', 'ME', 'RU', 'PK']
 
 @app.after_request
 def add_headers(resp):
@@ -30,35 +31,56 @@ def api_check():
     first = detect_region(uid)
     for region in [first] + [r for r in REGIONS if r != first]:
         try:
-            resp = requests.get(f'{API_BASE}/info?region={region}&uid={uid}', timeout=10,
- headers={'x-api-key': API_KEY, 'User-Agent': 'FFCheck/1.0 (+https://ff-check.onrender.com)'})
+            resp = requests.get(API_BASE, params={
+                'sectionName': 'AllData',
+                'PlayerUid': uid,
+                'region': region,
+                'useruid': API_UID,
+                'api': API_KEY
+            }, timeout=10)
+
             if resp.status_code != 200:
                 try:
                     err = resp.json()
-                    code = err.get('code', '')
-                    if 'QUOTA' in code:
-                        return jsonify({'error': 'API hết lượt, chờ đến 1/8/2026 hoặc dùng key mới'}), 429
-                    if code == 'FW_002':
-                        return jsonify({'error': 'Lỗi xác thực API, thử lại sau'}), 502
-                except: pass
+                    if 'error' in err:
+                        msg = err['error']
+                        if 'quota' in msg.lower() or 'limit' in msg.lower():
+                            return jsonify({'error': 'API hết lượt, thử lại sau'}), 429
+                except:
+                    pass
                 continue
+
             data = resp.json()
-            if data and 'basicInfo' in data:
-                info = data['basicInfo']
-                clan = data.get('clanBasicInfo', {}) or {}
+            if data and 'result' in data:
+                result = data['result']
+                info = result.get('captainBasicInfo', {}) or {}
+                account = result.get('AccountInfo', {}) or {}
+                guild = result.get('GuildInfo', {}) or {}
 
-                last_login = info.get('lastLoginAt', 0)
-                created = info.get('createAt', 0)
+                nickname = info.get('nickname') or account.get('AccountName', 'Không rõ')
+                level = info.get('level') or account.get('AccountLevel', 0)
+                liked = info.get('liked') or account.get('AccountLikes', 0)
+                region_name = info.get('region') or account.get('AccountRegion', region)
+
+                last_login = info.get('lastLoginAt') or account.get('AccountLastLogin', 0)
+                created = info.get('createAt') or account.get('AccountCreateTime', 0)
+
+                if isinstance(last_login, str):
+                    try: last_login = int(last_login)
+                    except: last_login = 0
+                if isinstance(created, str):
+                    try: created = int(created)
+                    except: created = 0
+
                 now = datetime.now(timezone.utc).timestamp()
-
                 is_online = (now - last_login) < 900 if last_login else False
 
                 return jsonify({
-                    'nickname': info.get('nickname', 'Không rõ'),
-                    'level': info.get('level', 0),
-                    'liked': info.get('liked', 0),
-                    'guild': clan.get('clanName', 'Không có'),
-                    'region': info.get('region', region),
+                    'nickname': nickname,
+                    'level': level,
+                    'liked': liked,
+                    'guild': guild.get('GuildName', 'Không có'),
+                    'region': region_name,
                     'online': is_online,
                     'lastLoginAt': last_login,
                     'createAt': created,
