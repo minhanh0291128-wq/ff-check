@@ -28,6 +28,9 @@ def parse_siambhau(data):
     result = data.get('result') or data
     basic = result.get('basicInfo', {}) or {}
     clan = result.get('clanBasicInfo', {}) or {}
+    social = result.get('socialInfo', {}) or {}
+    profile = result.get('profileInfo', {}) or {}
+    pet = result.get('petInfo', {}) or {}
 
     if not basic.get('nickname'):
         return None
@@ -35,12 +38,24 @@ def parse_siambhau(data):
     last_login = int(basic.get('lastLoginAt', 0)) if str(basic.get('lastLoginAt', '0')).isdigit() else 0
     created = int(basic.get('createAt', 0)) if str(basic.get('createAt', '0')).isdigit() else 0
 
+    gender_map = {'Gender_FEMALE': 'Nữ', 'Gender_MALE': 'Nam'}
+    lang_map = {'Language_VIETNAMESE': 'Tiếng Việt', 'Language_ENGLISH': 'English', 'Language_INDONESIAN': 'Bahasa', 'Language_HINDI': 'हिन्दी'}
+
     return {
         'nickname': basic.get('nickname', 'Không rõ'),
         'level': basic.get('level', 0),
         'liked': basic.get('liked', 0),
         'guild': clan.get('clanName', 'Không có'),
+        'guildLevel': clan.get('clanLevel', 0),
+        'guildMembers': f"{clan.get('memberNum', 0)}/{clan.get('capacity', 0)}",
         'region': basic.get('region', 'BD'),
+        'signature': social.get('signature', ''),
+        'gender': gender_map.get(social.get('gender', ''), ''),
+        'language': lang_map.get(social.get('language', ''), social.get('language', '')),
+        'primeLevel': basic.get('primeInfo', {}).get('primeLevel', 0),
+        'badgeCnt': basic.get('badgeCnt', 0),
+        'releaseVersion': basic.get('releaseVersion', ''),
+        'headPic': basic.get('headPic', 0),
         'lastLoginAt': last_login,
         'createAt': created,
         'accountAge': datetime.fromtimestamp(created).strftime('%d/%m/%Y') if created else 'Không rõ'
@@ -75,7 +90,16 @@ def parse_hl_gaming(data):
         'level': level,
         'liked': liked,
         'guild': guild.get('GuildName', 'Không có'),
+        'guildLevel': guild.get('GuildLevel', 0),
+        'guildMembers': f"{guild.get('GuildMember', 0)}/{guild.get('GuildCapacity', 0)}",
         'region': region_name,
+        'signature': '',
+        'gender': '',
+        'language': '',
+        'primeLevel': 0,
+        'badgeCnt': info.get('badgeCnt', 0),
+        'releaseVersion': info.get('releaseVersion', ''),
+        'headPic': info.get('headPic', 0),
         'lastLoginAt': last_login,
         'createAt': created,
         'accountAge': datetime.fromtimestamp(created).strftime('%d/%m/%Y') if created else 'Không rõ'

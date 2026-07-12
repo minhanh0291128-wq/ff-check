@@ -305,12 +305,17 @@ h1 {
   overflow: hidden;
   animation: itemFade 0.5s ease-out backwards;
 }
-.info-item:nth-child(1) { animation-delay: 0.05s; }
-.info-item:nth-child(2) { animation-delay: 0.1s; }
-.info-item:nth-child(3) { animation-delay: 0.15s; }
-.info-item:nth-child(4) { animation-delay: 0.2s; }
-.info-item:nth-child(5) { animation-delay: 0.25s; }
-.info-item:nth-child(6) { animation-delay: 0.3s; }
+.info-item:nth-child(1) { animation-delay: 0.03s; }
+.info-item:nth-child(2) { animation-delay: 0.06s; }
+.info-item:nth-child(3) { animation-delay: 0.09s; }
+.info-item:nth-child(4) { animation-delay: 0.12s; }
+.info-item:nth-child(5) { animation-delay: 0.15s; }
+.info-item:nth-child(6) { animation-delay: 0.18s; }
+.info-item:nth-child(7) { animation-delay: 0.21s; }
+.info-item:nth-child(8) { animation-delay: 0.24s; }
+.info-item:nth-child(9) { animation-delay: 0.27s; }
+.info-item:nth-child(10) { animation-delay: 0.3s; }
+.info-item:nth-child(11) { animation-delay: 0.33s; }
 @keyframes itemFade {
   0% { opacity: 0; transform: translateY(12px) scale(0.97); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -357,6 +362,16 @@ h1 {
 .info-item.date .info-value { color: #6ee7b7; }
 .info-item.guild::before { background: #f97316; }
 .info-item.guild .info-value { color: #fb923c; }
+.info-item.clan::before { background: #f59e0b; }
+.info-item.clan .info-value { color: #fbbf24; }
+.info-item.gender::before { background: #ec4899; }
+.info-item.gender .info-value { color: #f472b6; }
+.info-item.prime::before { background: #8b5cf6; }
+.info-item.prime .info-value { color: #a78bfa; }
+.info-item.badge::before { background: #14b8a6; }
+.info-item.badge .info-value { color: #2dd4bf; }
+.info-item.version::before { background: #6366f1; }
+.info-item.version .info-value { color: #818cf8; }
 .info-label {
   font-size: 10px;
   color: #556;
@@ -459,6 +474,43 @@ h1 {
   66% { transform: translate(-20px, 20px) scale(0.9); }
 }
 
+.signature {
+  margin-top: 16px;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  font-size: 13px;
+  color: #889;
+  font-style: italic;
+  text-align: center;
+  display: none;
+  animation: itemFade 0.5s 0.36s ease-out backwards;
+}
+.signature.show { display: block; }
+
+.info-item.nick .info-label { display: none; }
+.info-item.nick {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+}
+.avatar-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0;
+}
+.info-item.nick .info-value { text-align: left; font-size: 22px; }
+
 @media (max-width: 480px) {
   .input-group { flex-direction: column; }
   .info-grid { grid-template-columns: 1fr; }
@@ -491,13 +543,12 @@ h1 {
         <span class="status-dot"></span>
         <span id="statusText"></span>
       </div>
-      <div class="info-grid">
+      <div class="info-grid" id="infoGrid">
         <div class="info-item nick">
-          <div class="info-label">👤 Nickname</div>
           <div class="info-value" id="nickname">-</div>
         </div>
         <div class="info-item level">
-          <div class="info-label">⭐ Level</div>
+          <div class="info-label">⭐ Cấp độ</div>
           <div class="info-value" id="level">-</div>
         </div>
         <div class="info-item likes">
@@ -516,7 +567,28 @@ h1 {
           <div class="info-label">🏰 Quân đoàn</div>
           <div class="info-value" id="guild">-</div>
         </div>
+        <div class="info-item clan">
+          <div class="info-label">📊 Cấp quân đoàn</div>
+          <div class="info-value" id="guildInfo">-</div>
+        </div>
+        <div class="info-item gender">
+          <div class="info-label">👤 Giới tính</div>
+          <div class="info-value" id="genderLang">-</div>
+        </div>
+        <div class="info-item prime">
+          <div class="info-label">💎 Prime</div>
+          <div class="info-value" id="primeInfo">-</div>
+        </div>
+        <div class="info-item badge">
+          <div class="info-label">🏅 Huy hiệu</div>
+          <div class="info-value" id="badgeCnt">-</div>
+        </div>
+        <div class="info-item version">
+          <div class="info-label">🔄 Phiên bản</div>
+          <div class="info-value" id="releaseVersion">-</div>
+        </div>
       </div>
+      <div class="signature" id="signature"></div>
     </div>
     <div class="error" id="error"></div>
   </div>
@@ -629,6 +701,12 @@ async function check() {
   }
 }
 
+function avatarColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return 'hsl(' + (hash % 360) + ', 60%, 50%)';
+}
+
 function displayResult(d) {
   const bar = document.getElementById('statusBar');
   const statusText = document.getElementById('statusText');
@@ -643,13 +721,53 @@ function displayResult(d) {
     const ago = timeAgo(d.lastLoginAt);
     statusText.innerHTML = '🔴 Offline từ ' + dt + '<span class="status-sub">' + ago + '</span>';
   }
-  document.getElementById('nickname').textContent = d.nickname;
+
+  const name = d.nickname || '?';
+  const initial = name.charAt(0).toUpperCase();
+  const nickEl = document.getElementById('nickname');
+  nickEl.innerHTML = '<span class="avatar-circle" style="background:' + avatarColor(name) + '">' + initial + '</span><span>' + escapeHtml(name) + '</span>';
+
   document.getElementById('level').textContent = d.level;
   document.getElementById('liked').textContent = fmtNum(d.liked);
   document.getElementById('createDate').textContent = d.accountAge;
   document.getElementById('region').textContent = countryName(d.region);
   document.getElementById('guild').textContent = d.guild || 'Không có';
+
+  const guildInfo = [];
+  if (d.guildLevel) guildInfo.push('Cấp ' + d.guildLevel);
+  if (d.guildMembers) guildInfo.push(d.guildMembers + ' TV');
+  document.getElementById('guildInfo').textContent = guildInfo.length ? guildInfo.join(' · ') : '-';
+  document.getElementById('guildInfo').parentElement.style.display = guildInfo.length ? '' : 'none';
+
+  const parts = [];
+  if (d.gender) parts.push(d.gender);
+  if (d.language) parts.push(d.language);
+  document.getElementById('genderLang').textContent = parts.length ? parts.join(' · ') : '-';
+
+  if (d.primeLevel) {
+    document.getElementById('primeInfo').innerHTML = 'Cấp ' + d.primeLevel;
+  } else {
+    document.getElementById('primeInfo').textContent = 'Không có';
+  }
+
+  document.getElementById('badgeCnt').textContent = d.badgeCnt ? fmtNum(d.badgeCnt) : '0';
+  document.getElementById('releaseVersion').textContent = d.releaseVersion || '-';
+
+  const sigEl = document.getElementById('signature');
+  if (d.signature) {
+    sigEl.textContent = '"' + d.signature + '"';
+    sigEl.classList.add('show');
+  } else {
+    sigEl.classList.remove('show');
+  }
+
   document.getElementById('result').classList.add('show');
+}
+
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(s));
+  return div.innerHTML;
 }
 
 function showError(msg) {
