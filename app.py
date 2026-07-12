@@ -36,13 +36,16 @@ def parse_siambhau(data):
     created = int(basic.get('createAt', 0)) if str(basic.get('createAt', '0')).isdigit() else 0
     now = datetime.now(timezone.utc).timestamp()
 
+    diff = now - last_login
+    is_online = 0 < diff < 900 if last_login else False
+
     return {
         'nickname': basic.get('nickname', 'Không rõ'),
         'level': basic.get('level', 0),
         'liked': basic.get('liked', 0),
         'guild': clan.get('clanName', 'Không có'),
         'region': basic.get('region', 'BD'),
-        'online': (now - last_login) < 900 if last_login else False,
+        'online': is_online,
         'lastLoginAt': last_login,
         'createAt': created,
         'accountAge': datetime.fromtimestamp(created).strftime('%d/%m/%Y') if created else 'Không rõ'
@@ -74,13 +77,16 @@ def parse_hl_gaming(data):
 
     now = datetime.now(timezone.utc).timestamp()
 
+    diff = now - last_login
+    is_online = 0 < diff < 900 if last_login else False
+
     return {
         'nickname': nickname,
         'level': level,
         'liked': liked,
         'guild': guild.get('GuildName', 'Không có'),
         'region': region_name,
-        'online': (now - last_login) < 900 if last_login else False,
+        'online': is_online,
         'lastLoginAt': last_login,
         'createAt': created,
         'accountAge': datetime.fromtimestamp(created).strftime('%d/%m/%Y') if created else 'Không rõ'
