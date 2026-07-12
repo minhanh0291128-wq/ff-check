@@ -316,6 +316,7 @@ h1 {
 .info-item:nth-child(9) { animation-delay: 0.27s; }
 .info-item:nth-child(10) { animation-delay: 0.3s; }
 .info-item:nth-child(11) { animation-delay: 0.33s; }
+.info-item:nth-child(12) { animation-delay: 0.36s; }
 @keyframes itemFade {
   0% { opacity: 0; transform: translateY(12px) scale(0.97); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -366,6 +367,8 @@ h1 {
 .info-item.clan .info-value { color: #fbbf24; }
 .info-item.gender::before { background: #ec4899; }
 .info-item.gender .info-value { color: #f472b6; }
+.info-item.language::before { background: #06b6d4; }
+.info-item.language .info-value { color: #22d3ee; }
 .info-item.prime::before { background: #8b5cf6; }
 .info-item.prime .info-value { color: #a78bfa; }
 .info-item.badge::before { background: #14b8a6; }
@@ -573,7 +576,11 @@ h1 {
         </div>
         <div class="info-item gender">
           <div class="info-label">👤 Giới tính</div>
-          <div class="info-value" id="genderLang">-</div>
+          <div class="info-value" id="genderVal">-</div>
+        </div>
+        <div class="info-item language">
+          <div class="info-label">🌐 Ngôn ngữ</div>
+          <div class="info-value" id="langVal">-</div>
         </div>
         <div class="info-item prime">
           <div class="info-label">💎 Prime</div>
@@ -739,10 +746,8 @@ function displayResult(d) {
   document.getElementById('guildInfo').textContent = guildInfo.length ? guildInfo.join(' · ') : '-';
   document.getElementById('guildInfo').parentElement.style.display = guildInfo.length ? '' : 'none';
 
-  const parts = [];
-  if (d.gender) parts.push(d.gender);
-  if (d.language) parts.push(d.language);
-  document.getElementById('genderLang').textContent = parts.length ? parts.join(' · ') : '-';
+  document.getElementById('genderVal').textContent = d.gender || '-';
+  document.getElementById('langVal').textContent = d.language || '-';
 
   if (d.primeLevel) {
     document.getElementById('primeInfo').innerHTML = 'Cấp ' + d.primeLevel;
