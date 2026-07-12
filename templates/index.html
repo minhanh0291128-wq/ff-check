@@ -1047,7 +1047,9 @@ function displayResultTT(d) {
     bioEl.textContent = d.bio;
     bioEl.style.display = 'block';
   } else {
-    bioEl.style.display = 'none';
+    bioEl.textContent = 'Chưa có tiểu sử';
+    bioEl.style.display = 'block';
+    bioEl.style.opacity = '0.4';
   }
 
   const badges = document.getElementById('ttBadges');
