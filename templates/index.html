@@ -86,11 +86,12 @@ body::before {
   position: absolute;
   border-radius: 50%;
   background: #fff;
-  animation: twinkle var(--dur) ease-in-out infinite alternate;
+  animation: drift var(--dur) ease-in-out infinite alternate;
 }
-@keyframes twinkle {
-  0% { opacity: 0.1; transform: scale(0.6); }
-  100% { opacity: 1; transform: scale(1); }
+@keyframes drift {
+  0% { opacity: 0.1; transform: translate(0, 0) scale(0.6); }
+  50% { opacity: 0.8; transform: translate(var(--dx, 20px), var(--dy, -10px)) scale(1); }
+  100% { opacity: 0.15; transform: translate(calc(var(--dx, 20px) * -1), calc(var(--dy, -10px) * -1)) scale(0.7); }
 }
 
 .container {
@@ -531,15 +532,18 @@ const REGION_NAMES = {
 
 function createStars() {
   const c = document.getElementById('stars');
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < 200; i++) {
     const s = document.createElement('div');
     s.className = 'star';
     s.style.left = Math.random() * 100 + '%';
     s.style.top = Math.random() * 100 + '%';
-    s.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
-    const size = 1 + Math.random() * 2;
+    s.style.setProperty('--dur', (4 + Math.random() * 6) + 's');
+    s.style.setProperty('--dx', (10 + Math.random() * 40) + 'px');
+    s.style.setProperty('--dy', (10 + Math.random() * 30) + 'px');
+    const size = 1 + Math.random() * 2.5;
     s.style.width = size + 'px';
     s.style.height = size + 'px';
+    s.style.animationDelay = Math.random() * 4 + 's';
     c.appendChild(s);
   }
 }
@@ -547,15 +551,27 @@ createStars();
 
 // Shooting stars
 function createShootingStars() {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'shooting-star';
+      s.style.top = (5 + Math.random() * 25) + '%';
+      s.style.left = (50 + Math.random() * 50) + '%';
+      s.style.setProperty('--dur', (5 + Math.random() * 6) + 's');
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 12000);
+    }, i * 3000 + Math.random() * 2000);
+  }
+  // Loop
+  setInterval(() => {
     const s = document.createElement('div');
     s.className = 'shooting-star';
-    s.style.top = (5 + Math.random() * 20) + '%';
-    s.style.left = (60 + Math.random() * 40) + '%';
-    s.style.setProperty('--dur', (6 + Math.random() * 8) + 's');
-    s.style.animationDelay = (i * 4 + Math.random() * 3) + 's';
+    s.style.top = (5 + Math.random() * 25) + '%';
+    s.style.left = (50 + Math.random() * 50) + '%';
+    s.style.setProperty('--dur', (5 + Math.random() * 6) + 's');
     document.body.appendChild(s);
-  }
+    setTimeout(() => s.remove(), 12000);
+  }, 3000);
 }
 createShootingStars();
 
