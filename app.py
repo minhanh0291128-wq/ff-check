@@ -126,10 +126,13 @@ def api_check():
                 continue
 
             data = resp.json()
-            if data and not data.get('error'):
+            if data:
+                if data.get('error'):
+                    return jsonify({'error': data['error']}), 400
                 parsed = parse_siambhau(data)
                 if parsed:
                     return jsonify(parsed)
+                return jsonify({'error': 'API không tìm thấy UID này'}), 404
         except requests.exceptions.RequestException:
             continue
 
