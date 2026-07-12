@@ -30,6 +30,21 @@ body::before {
   pointer-events: none;
 }
 
+/* Watermark */
+.watermark {
+  position: fixed;
+  top: 16px;
+  left: 20px;
+  z-index: 10;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(0, 217, 255, 0.25);
+  letter-spacing: 2px;
+  pointer-events: none;
+  user-select: none;
+  text-transform: uppercase;
+}
+
 /* Particle canvas */
 #particleCanvas {
   position: fixed;
@@ -634,6 +649,7 @@ h1 {
 </head>
 <body>
 <canvas id="particleCanvas"></canvas>
+<div class="watermark">HẢIANH</div>
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 <div class="orb orb-3"></div>
