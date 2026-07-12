@@ -731,19 +731,19 @@ h1 {
           <div class="tt-stats">
             <div class="tt-stat">
               <div class="tt-stat-value" id="ttFollowers">-</div>
-              <div class="tt-stat-label">Followers</div>
+              <div class="tt-stat-label">Người theo dõi</div>
             </div>
             <div class="tt-stat">
               <div class="tt-stat-value" id="ttFollowing">-</div>
-              <div class="tt-stat-label">Following</div>
+              <div class="tt-stat-label">Đang theo dõi</div>
             </div>
             <div class="tt-stat">
               <div class="tt-stat-value" id="ttLikes">-</div>
-              <div class="tt-stat-label">Likes</div>
+              <div class="tt-stat-label">Lượt tim</div>
             </div>
             <div class="tt-stat">
               <div class="tt-stat-value" id="ttVideos">-</div>
-              <div class="tt-stat-label">Videos</div>
+              <div class="tt-stat-label">Video</div>
             </div>
           </div>
           <div class="tt-bio" id="ttBio"></div>
@@ -1029,14 +1029,18 @@ async function checkTT() {
   animate();
 })();
 
+function fmtFull(n) {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
 function displayResultTT(d) {
   document.getElementById('ttAvatar').src = d.avatar;
   document.getElementById('ttDisplayName').textContent = d.displayName || d.username;
   document.getElementById('ttUsername').textContent = '@' + d.username;
-  document.getElementById('ttFollowers').textContent = d.followersFmt;
-  document.getElementById('ttFollowing').textContent = d.followingFmt || d.following;
-  document.getElementById('ttLikes').textContent = d.likesFmt;
-  document.getElementById('ttVideos').textContent = d.videosFmt;
+  document.getElementById('ttFollowers').textContent = fmtFull(d.followers);
+  document.getElementById('ttFollowing').textContent = fmtFull(d.following);
+  document.getElementById('ttLikes').textContent = fmtFull(d.likes);
+  document.getElementById('ttVideos').textContent = fmtFull(d.videos);
 
   const bioEl = document.getElementById('ttBio');
   if (d.bio) {
