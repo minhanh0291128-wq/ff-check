@@ -492,26 +492,6 @@ h1 {
 }
 .signature.show { display: block; }
 
-.info-item.nick .info-label { display: none; }
-.info-item.nick {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px 24px;
-}
-.avatar-circle {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0;
-}
 .info-item.nick .info-value { text-align: left; font-size: 22px; }
 
 @media (max-width: 480px) {
@@ -708,12 +688,6 @@ async function check() {
   }
 }
 
-function avatarColor(name) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return 'hsl(' + (hash % 360) + ', 60%, 50%)';
-}
-
 function displayResult(d) {
   const bar = document.getElementById('statusBar');
   const statusText = document.getElementById('statusText');
@@ -729,10 +703,7 @@ function displayResult(d) {
     statusText.innerHTML = '🔴 Offline từ ' + dt + '<span class="status-sub">' + ago + '</span>';
   }
 
-  const name = d.nickname || '?';
-  const initial = name.charAt(0).toUpperCase();
-  const nickEl = document.getElementById('nickname');
-  nickEl.innerHTML = '<span class="avatar-circle" style="background:' + avatarColor(name) + '">' + initial + '</span><span>' + escapeHtml(name) + '</span>';
+  document.getElementById('nickname').textContent = d.nickname || '?';
 
   document.getElementById('level').textContent = d.level;
   document.getElementById('liked').textContent = fmtNum(d.liked);
@@ -769,11 +740,7 @@ function displayResult(d) {
   document.getElementById('result').classList.add('show');
 }
 
-function escapeHtml(s) {
-  const div = document.createElement('div');
-  div.appendChild(document.createTextNode(s));
-  return div.innerHTML;
-}
+
 
 function showError(msg) {
   const el = document.getElementById('error');
