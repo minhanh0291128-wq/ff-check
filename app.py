@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 import requests
-from datetime import datetime, timezone
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -34,10 +34,6 @@ def parse_siambhau(data):
 
     last_login = int(basic.get('lastLoginAt', 0)) if str(basic.get('lastLoginAt', '0')).isdigit() else 0
     created = int(basic.get('createAt', 0)) if str(basic.get('createAt', '0')).isdigit() else 0
-    now = datetime.now(timezone.utc).timestamp()
-
-    diff = now - last_login
-    is_online = 0 < diff < 900 if last_login else False
 
     return {
         'nickname': basic.get('nickname', 'Không rõ'),
@@ -45,7 +41,6 @@ def parse_siambhau(data):
         'liked': basic.get('liked', 0),
         'guild': clan.get('clanName', 'Không có'),
         'region': basic.get('region', 'BD'),
-        'online': is_online,
         'lastLoginAt': last_login,
         'createAt': created,
         'accountAge': datetime.fromtimestamp(created).strftime('%d/%m/%Y') if created else 'Không rõ'
@@ -75,18 +70,12 @@ def parse_hl_gaming(data):
         try: created = int(created)
         except: created = 0
 
-    now = datetime.now(timezone.utc).timestamp()
-
-    diff = now - last_login
-    is_online = 0 < diff < 900 if last_login else False
-
     return {
         'nickname': nickname,
         'level': level,
         'liked': liked,
         'guild': guild.get('GuildName', 'Không có'),
         'region': region_name,
-        'online': is_online,
         'lastLoginAt': last_login,
         'createAt': created,
         'accountAge': datetime.fromtimestamp(created).strftime('%d/%m/%Y') if created else 'Không rõ'

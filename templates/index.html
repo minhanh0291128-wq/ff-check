@@ -632,8 +632,11 @@ async function check() {
 function displayResult(d) {
   const bar = document.getElementById('statusBar');
   const statusText = document.getElementById('statusText');
-  bar.className = 'status-bar ' + (d.online ? 'status-online' : 'status-offline');
-  if (d.online) {
+  const now = Math.floor(Date.now() / 1000);
+  const diff = now - d.lastLoginAt;
+  const online = diff > 0 && diff < 900;
+  bar.className = 'status-bar ' + (online ? 'status-online' : 'status-offline');
+  if (online) {
     statusText.innerHTML = '🟢 Đang online';
   } else {
     const dt = fmtDateTime(d.lastLoginAt);
