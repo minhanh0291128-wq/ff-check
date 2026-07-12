@@ -651,6 +651,10 @@ h1 {
   .card { padding: 28px 18px; }
   h1 { font-size: 26px; }
   .orb { display: none; }
+  .star { display: none; }
+  .shooting-star { display: none; }
+  .watermark { font-size: 18px; top: 12px; left: 16px; opacity: 0.3; }
+  .tt-avatar { width: 96px; height: 96px; }
 }
 </style>
 </head>
@@ -991,9 +995,10 @@ async function checkTT() {
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
   let particles = [];
-  const COUNT = 130;
-  const CONNECT_DIST = 180;
-  const SPEED = 0.4;
+  const isMobile = window.innerWidth < 480;
+  const COUNT = isMobile ? 40 : 130;
+  const CONNECT_DIST = isMobile ? 100 : 180;
+  const SPEED = isMobile ? 0.2 : 0.4;
 
   function resize() {
     canvas.width = window.innerWidth;
