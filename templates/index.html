@@ -140,6 +140,38 @@ body::before {
   pointer-events: none;
 }
 
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.tab {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  border-radius: 11px;
+  border: none;
+  background: transparent;
+  color: #667;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.tab:hover { color: #aab; }
+.tab.active {
+  background: linear-gradient(135deg, #0088ff, #0044aa);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0,136,255,0.3);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
 h1 {
   font-size: 32px;
   font-weight: 900;
@@ -491,9 +523,100 @@ h1 {
 
 .info-item.nick .info-value { text-align: left; font-size: 22px; }
 
+/* TikTok profile */
+.tt-profile {
+  text-align: center;
+  padding: 10px 0;
+}
+.tt-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.1);
+  margin-bottom: 12px;
+  object-fit: cover;
+}
+.tt-name { margin-bottom: 20px; }
+.tt-displayname {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.tt-username {
+  font-size: 14px;
+  color: #667;
+  margin-top: 2px;
+}
+.tt-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.tt-stat {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px 10px;
+  transition: 0.3s;
+}
+.tt-stat:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(0,136,255,0.2);
+  transform: translateY(-2px);
+}
+.tt-stat-value {
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0088ff, #ff0050);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.tt-stat-label {
+  font-size: 11px;
+  color: #667;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.tt-bio {
+  font-size: 14px;
+  color: #889;
+  font-style: italic;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+.tt-badges {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.tt-badge {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.tt-badge.verified {
+  background: rgba(0,200,255,0.1);
+  border: 1px solid rgba(0,200,255,0.3);
+  color: #00c8ff;
+}
+.tt-badge.private {
+  background: rgba(255,180,0,0.1);
+  border: 1px solid rgba(255,180,0,0.3);
+  color: #ffb800;
+}
+
 @media (max-width: 480px) {
   .input-group { flex-direction: column; }
   .info-grid { grid-template-columns: 1fr; }
+  .tt-stats { grid-template-columns: repeat(2, 1fr); }
   .card { padding: 28px 18px; }
   h1 { font-size: 26px; }
   .orb { display: none; }
@@ -508,69 +631,117 @@ h1 {
 <div class="stars" id="stars"></div>
 <div class="container">
   <div class="card">
-    <h1>FF Check</h1>
-    <p class="subtitle">Tra cứu thông tin tài khoản Free Fire</p>
-    <div class="input-group">
-      <input type="text" id="uidInput" placeholder="Nhập UID..." maxlength="15">
-      <button id="checkBtn" onclick="check()">Tra cứu</button>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('ff')" id="tabFF">🔥 FF Check</button>
+      <button class="tab" onclick="switchTab('tiktok')" id="tabTT">🎵 TikTok</button>
     </div>
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <span class="loading-text">Đang tra cứu<span class="loading-dots"><span></span><span></span><span></span></span></span>
-    </div>
-    <div class="result" id="result">
-      <div class="status-bar" id="statusBar">
-        <span class="status-dot"></span>
-        <span id="statusText"></span>
+
+    <!-- FF Tab -->
+    <div class="tab-content active" id="contentFF">
+      <div class="input-group">
+        <input type="text" id="uidInput" placeholder="Nhập UID..." maxlength="15">
+        <button id="checkBtn" onclick="checkFF()">Tra cứu</button>
       </div>
-      <div class="info-grid" id="infoGrid">
-        <div class="info-item nick">
-          <div class="info-value" id="nickname">-</div>
+      <div class="loading" id="loadingFF">
+        <div class="spinner"></div>
+        <span class="loading-text">Đang tra cứu<span class="loading-dots"><span></span><span></span><span></span></span></span>
+      </div>
+      <div class="result" id="resultFF">
+        <div class="status-bar" id="statusBar">
+          <span class="status-dot"></span>
+          <span id="statusText"></span>
         </div>
-        <div class="info-item level">
-          <div class="info-label">⭐ Cấp độ</div>
-          <div class="info-value" id="level">-</div>
+        <div class="info-grid" id="infoGrid">
+          <div class="info-item nick">
+            <div class="info-value" id="nickname">-</div>
+          </div>
+          <div class="info-item level">
+            <div class="info-label">⭐ Cấp độ</div>
+            <div class="info-value" id="level">-</div>
+          </div>
+          <div class="info-item likes">
+            <div class="info-label">❤️ Lượt thích</div>
+            <div class="info-value" id="liked">-</div>
+          </div>
+          <div class="info-item region">
+            <div class="info-label">🌍 Quốc gia</div>
+            <div class="info-value" id="region">-</div>
+          </div>
+          <div class="info-item date">
+            <div class="info-label">📅 Ngày tạo</div>
+            <div class="info-value" id="createDate">-</div>
+          </div>
+          <div class="info-item guild">
+            <div class="info-label">🏰 Quân đoàn</div>
+            <div class="info-value" id="guild">-</div>
+          </div>
+          <div class="info-item clan">
+            <div class="info-label">📊 Cấp quân đoàn</div>
+            <div class="info-value" id="guildInfo">-</div>
+          </div>
+          <div class="info-item language">
+            <div class="info-label">🌐 Ngôn ngữ</div>
+            <div class="info-value" id="langVal">-</div>
+          </div>
+          <div class="info-item prime">
+            <div class="info-label">💎 Prime</div>
+            <div class="info-value" id="primeInfo">-</div>
+          </div>
+          <div class="info-item badge">
+            <div class="info-label">🏅 Huy hiệu</div>
+            <div class="info-value" id="badgeCnt">-</div>
+          </div>
+          <div class="info-item version">
+            <div class="info-label">🔄 Phiên bản</div>
+            <div class="info-value" id="releaseVersion">-</div>
+          </div>
         </div>
-        <div class="info-item likes">
-          <div class="info-label">❤️ Lượt thích</div>
-          <div class="info-value" id="liked">-</div>
-        </div>
-        <div class="info-item region">
-          <div class="info-label">🌍 Quốc gia</div>
-          <div class="info-value" id="region">-</div>
-        </div>
-        <div class="info-item date">
-          <div class="info-label">📅 Ngày tạo</div>
-          <div class="info-value" id="createDate">-</div>
-        </div>
-        <div class="info-item guild">
-          <div class="info-label">🏰 Quân đoàn</div>
-          <div class="info-value" id="guild">-</div>
-        </div>
-        <div class="info-item clan">
-          <div class="info-label">📊 Cấp quân đoàn</div>
-          <div class="info-value" id="guildInfo">-</div>
-        </div>
-        <div class="info-item language">
-          <div class="info-label">🌐 Ngôn ngữ</div>
-          <div class="info-value" id="langVal">-</div>
-        </div>
-        <div class="info-item prime">
-          <div class="info-label">💎 Prime</div>
-          <div class="info-value" id="primeInfo">-</div>
-        </div>
-        <div class="info-item badge">
-          <div class="info-label">🏅 Huy hiệu</div>
-          <div class="info-value" id="badgeCnt">-</div>
-        </div>
-        <div class="info-item version">
-          <div class="info-label">🔄 Phiên bản</div>
-          <div class="info-value" id="releaseVersion">-</div>
+        <div class="signature" id="signature"></div>
+      </div>
+      <div class="error" id="errorFF"></div>
+    </div>
+
+    <!-- TikTok Tab -->
+    <div class="tab-content" id="contentTT">
+      <div class="input-group">
+        <input type="text" id="ttInput" placeholder="Nhập username TikTok..." maxlength="30">
+        <button id="ttBtn" onclick="checkTT()">Tra cứu</button>
+      </div>
+      <div class="loading" id="loadingTT">
+        <div class="spinner"></div>
+        <span class="loading-text">Đang tra cứu<span class="loading-dots"><span></span><span></span><span></span></span></span>
+      </div>
+      <div class="result" id="resultTT">
+        <div class="tt-profile" id="ttProfile">
+          <img class="tt-avatar" id="ttAvatar" src="" alt="avatar">
+          <div class="tt-name">
+            <div class="tt-displayname" id="ttDisplayName">-</div>
+            <div class="tt-username" id="ttUsername">-</div>
+          </div>
+          <div class="tt-stats">
+            <div class="tt-stat">
+              <div class="tt-stat-value" id="ttFollowers">-</div>
+              <div class="tt-stat-label">Followers</div>
+            </div>
+            <div class="tt-stat">
+              <div class="tt-stat-value" id="ttFollowing">-</div>
+              <div class="tt-stat-label">Following</div>
+            </div>
+            <div class="tt-stat">
+              <div class="tt-stat-value" id="ttLikes">-</div>
+              <div class="tt-stat-label">Likes</div>
+            </div>
+            <div class="tt-stat">
+              <div class="tt-stat-value" id="ttVideos">-</div>
+              <div class="tt-stat-label">Videos</div>
+            </div>
+          </div>
+          <div class="tt-bio" id="ttBio"></div>
+          <div class="tt-badges" id="ttBadges"></div>
         </div>
       </div>
-      <div class="signature" id="signature"></div>
+      <div class="error" id="errorTT"></div>
     </div>
-    <div class="error" id="error"></div>
   </div>
 </div>
 <script>
@@ -654,16 +825,23 @@ function countryName(code) {
   return REGION_NAMES[code] || code;
 }
 
-async function check() {
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab' + (tab === 'ff' ? 'FF' : 'TT')).classList.add('active');
+  document.getElementById('content' + (tab === 'ff' ? 'FF' : 'TT')).classList.add('active');
+}
+
+async function checkFF() {
   const uid = document.getElementById('uidInput').value.trim();
   if (!uid || uid.length < 6 || !/^\d+$/.test(uid)) {
-    showError('UID không hợp lệ (6-15 chữ số)');
+    showErrorFF('UID không hợp lệ (6-15 chữ số)');
     return;
   }
   const btn = document.getElementById('checkBtn');
-  const loading = document.getElementById('loading');
-  const result = document.getElementById('result');
-  const error = document.getElementById('error');
+  const loading = document.getElementById('loadingFF');
+  const result = document.getElementById('resultFF');
+  const error = document.getElementById('errorFF');
   btn.disabled = true;
   loading.classList.add('show');
   result.classList.remove('show');
@@ -671,17 +849,17 @@ async function check() {
   try {
     const res = await fetch('/api/check?uid=' + uid);
     const data = await res.json();
-    if (data.error) { showError(data.error); return; }
-    displayResult(data);
+    if (data.error) { showErrorFF(data.error); return; }
+    displayResultFF(data);
   } catch (e) {
-    showError('Lỗi kết nối máy chủ');
+    showErrorFF('Lỗi kết nối máy chủ');
   } finally {
     btn.disabled = false;
     loading.classList.remove('show');
   }
 }
 
-function displayResult(d) {
+function displayResultFF(d) {
   const bar = document.getElementById('statusBar');
   const statusText = document.getElementById('statusText');
   const now = Math.floor(Date.now() / 1000);
@@ -729,16 +907,85 @@ function displayResult(d) {
     sigEl.classList.remove('show');
   }
 
-  document.getElementById('result').classList.add('show');
+  document.getElementById('resultFF').classList.add('show');
 }
 
 
 
-function showError(msg) {
-  const el = document.getElementById('error');
+function showErrorFF(msg) {
+  const el = document.getElementById('errorFF');
   el.textContent = msg;
   el.classList.add('show');
-  document.getElementById('result').classList.remove('show');
+  document.getElementById('resultFF').classList.remove('show');
+}
+
+function showErrorTT(msg) {
+  const el = document.getElementById('errorTT');
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById('resultTT').classList.remove('show');
+}
+
+async function checkTT() {
+  const username = document.getElementById('ttInput').value.trim();
+  if (!username || username.length < 2) {
+    showErrorTT('Nhập username TikTok');
+    return;
+  }
+  const btn = document.getElementById('ttBtn');
+  const loading = document.getElementById('loadingTT');
+  const result = document.getElementById('resultTT');
+  const error = document.getElementById('errorTT');
+  btn.disabled = true;
+  loading.classList.add('show');
+  result.classList.remove('show');
+  error.classList.remove('show');
+  try {
+    const res = await fetch('/api/tiktok?username=' + encodeURIComponent(username));
+    const data = await res.json();
+    if (data.error) { showErrorTT(data.error); return; }
+    displayResultTT(data);
+  } catch (e) {
+    showErrorTT('Lỗi kết nối máy chủ');
+  } finally {
+    btn.disabled = false;
+    loading.classList.remove('show');
+  }
+}
+
+function displayResultTT(d) {
+  document.getElementById('ttAvatar').src = d.avatar;
+  document.getElementById('ttDisplayName').textContent = d.displayName || d.username;
+  document.getElementById('ttUsername').textContent = '@' + d.username;
+  document.getElementById('ttFollowers').textContent = d.followersFmt;
+  document.getElementById('ttFollowing').textContent = d.followingFmt || d.following;
+  document.getElementById('ttLikes').textContent = d.likesFmt;
+  document.getElementById('ttVideos').textContent = d.videosFmt;
+
+  const bioEl = document.getElementById('ttBio');
+  if (d.bio) {
+    bioEl.textContent = d.bio;
+    bioEl.style.display = 'block';
+  } else {
+    bioEl.style.display = 'none';
+  }
+
+  const badges = document.getElementById('ttBadges');
+  badges.innerHTML = '';
+  if (d.verified) {
+    const v = document.createElement('span');
+    v.className = 'tt-badge verified';
+    v.textContent = '✓ Đã xác thực';
+    badges.appendChild(v);
+  }
+  if (d.private) {
+    const p = document.createElement('span');
+    p.className = 'tt-badge private';
+    p.textContent = '🔒 Riêng tư';
+    badges.appendChild(p);
+  }
+
+  document.getElementById('resultTT').classList.add('show');
 }
 </script>
 </body>

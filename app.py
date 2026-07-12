@@ -166,5 +166,55 @@ def api_check():
 
     return jsonify({'error': 'Không tìm thấy UID'}), 404
 
+@app.route('/api/tiktok')
+def api_tiktok():
+    username = request.args.get('username', '').strip().lstrip('@')
+    if not username or len(username) < 2:
+        return jsonify({'error': 'Username không hợp lệ'}), 400
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    }
+    try:
+        resp = requests.get(f'https://www.tiktok.com/@{username}', headers=headers, timeout=15)
+        if resp.status_code != 200:
+            return jsonify({'error': 'Không tìm thấy username này'}), 404
+
+        import re
+        m = re.search(r'<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([^<]+)</script>', resp.text)
+        if not m:
+            return jsonify({'error': 'Không thể lấy dữ liệu TikTok'}), 502
+
+        import json
+        data = json.loads(m.group(1))
+        scope = data.get('__DEFAULT_SCOPE__', {})
+        user_info = scope.get('webapp.user-detail', {}).get('userInfo', {})
+        user = user_info.get('user', {})
+        stats = user_info.get('stats', {})
+
+        if not user:
+            return jsonify({'error': 'Không tìm thấy người dùng'}), 404
+
+        fmt = lambda n: n // 1000000 and f'{n/1000000:.1f}M' or n // 1000 and f'{n//1000}k' or str(n)
+
+        return jsonify({
+            'username': username,
+            'displayName': user.get('nickname', ''),
+            'avatar': user.get('avatarLarger', ''),
+            'bio': user.get('signature', ''),
+            'followers': stats.get('followerCount', 0),
+            'following': stats.get('followingCount', 0),
+            'likes': stats.get('heartCount', 0),
+            'videos': stats.get('videoCount', 0),
+            'verified': user.get('verified', False),
+            'private': user.get('privateAccount', False),
+            'followersFmt': fmt(stats.get('followerCount', 0)),
+            'followingFmt': fmt(stats.get('followingCount', 0)),
+            'likesFmt': fmt(stats.get('heartCount', 0)),
+            'videosFmt': fmt(stats.get('videoCount', 0)),
+        })
+    except requests.exceptions.RequestException:
+        return jsonify({'error': 'Lỗi kết nối TikTok'}), 502
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
