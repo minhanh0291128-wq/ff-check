@@ -991,9 +991,9 @@ async function checkTT() {
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
   let particles = [];
-  const COUNT = 90;
-  const CONNECT_DIST = 130;
-  const SPEED = 0.3;
+  const COUNT = 130;
+  const CONNECT_DIST = 180;
+  const SPEED = 0.4;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -1008,7 +1008,7 @@ async function checkTT() {
       this.y = Math.random() * canvas.height;
       this.vx = (Math.random() - 0.5) * SPEED;
       this.vy = (Math.random() - 0.5) * SPEED;
-      this.r = 1.5 + Math.random() * 1.5;
+      this.r = 2 + Math.random() * 2.5;
     }
     update() {
       this.x += this.vx;
@@ -1041,8 +1041,8 @@ async function checkTT() {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = 'rgba(0, 217, 255, ' + (1 - dist / CONNECT_DIST) * 0.3 + ')';
-          ctx.lineWidth = 0.6;
+          ctx.strokeStyle = 'rgba(0, 217, 255, ' + (1 - dist / CONNECT_DIST) * 0.5 + ')';
+          ctx.lineWidth = 1.0;
           ctx.stroke();
         }
       }
