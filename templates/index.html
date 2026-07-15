@@ -627,6 +627,10 @@ h1 {
   justify-content: center;
   flex-wrap: wrap;
 }
+.tt-biolink { text-align: center; margin-top: 10px; }
+.tt-biolink a { color: #40bbff; font-size: 13px; text-decoration: none; word-break: break-all; }
+.tt-biolink a:hover { text-decoration: underline; }
+.tt-age { text-align: center; margin-top: 6px; font-size: 13px; color: rgba(255,255,255,0.5); }
 .tt-badge {
   padding: 4px 14px;
   border-radius: 20px;
@@ -774,6 +778,8 @@ h1 {
             </div>
           </div>
           <div class="tt-bio" id="ttBio"></div>
+          <div class="tt-biolink" id="ttBioLink"></div>
+          <div class="tt-age" id="ttAge"></div>
           <div class="tt-badges" id="ttBadges"></div>
         </div>
       </div>
@@ -1078,6 +1084,22 @@ function displayResultTT(d) {
     bioEl.textContent = 'Chưa có tiểu sử';
     bioEl.style.display = 'block';
     bioEl.style.opacity = '0.4';
+  }
+
+  const ageEl = document.getElementById('ttAge');
+  if (d.accountAge) {
+    ageEl.textContent = '📅 Ngày tạo: ' + d.accountAge;
+    ageEl.style.display = 'block';
+  } else {
+    ageEl.style.display = 'none';
+  }
+
+  const linkEl = document.getElementById('ttBioLink');
+  if (d.bioLink) {
+    linkEl.innerHTML = '<a href="' + d.bioLink + '" target="_blank" rel="noopener">🔗 ' + d.bioLink + '</a>';
+    linkEl.style.display = 'block';
+  } else {
+    linkEl.style.display = 'none';
   }
 
   const badges = document.getElementById('ttBadges');

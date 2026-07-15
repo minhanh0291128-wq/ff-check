@@ -197,17 +197,22 @@ def api_tiktok():
 
         fmt = lambda n: n // 1000000 and f'{n/1000000:.1f}M' or n // 1000 and f'{n//1000}k' or str(n)
 
+        created = user.get('createTime', 0)
+        bio_link = user.get('bioLink', {}).get('link', '') if user.get('bioLink') else ''
+
         return jsonify({
             'username': username,
             'displayName': user.get('nickname', ''),
             'avatar': user.get('avatarLarger', ''),
             'bio': user.get('signature', ''),
+            'bioLink': bio_link,
             'followers': stats.get('followerCount', 0),
             'following': stats.get('followingCount', 0),
             'likes': stats.get('heartCount', 0),
             'videos': stats.get('videoCount', 0),
             'verified': user.get('verified', False),
             'private': user.get('privateAccount', False),
+            'accountAge': datetime.fromtimestamp(created).strftime('%d/%m/%Y') if created else '',
             'followersFmt': fmt(stats.get('followerCount', 0)),
             'followingFmt': fmt(stats.get('followingCount', 0)),
             'likesFmt': fmt(stats.get('heartCount', 0)),
